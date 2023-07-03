@@ -14,39 +14,16 @@ BOOKS = [
 
 
 @app.get("/books")
-async def get_all_books():
-    return BOOKS
+async def get_book_by_query(category: str = None, author: str = None, title: str = None):
+    books_to_return = BOOKS
+    if category:
+        books_to_return = filter(lambda book: book['category'].casefold() == category.casefold(), books_to_return)
+    if author:
+        books_to_return = filter(lambda book: author.casefold() in book['author'].casefold(), books_to_return)
+    if title:
+        books_to_return = filter(lambda book: title.casefold() in book['title'].casefold(), books_to_return)
 
-
-@app.get('/books/')
-async def get_book_by_category(category: str):
-    books_to_return = [book for book in BOOKS if book.get('category').casefold() == category.casefold()]
-    return books_to_return
-
-
-@app.get('/books/author/')
-async def get_book_by_author_query(author: str):
-    books_to_return = [book for book in BOOKS if author.casefold() in book.get('author').casefold()]
-    return books_to_return
-
-
-@app.get('/books/author/{author}')
-async def get_book_by_author_path(author: str):
-    books_to_return = [book for book in BOOKS if author.casefold() in book.get('author').casefold()]
-    return books_to_return
-
-
-@app.get('/books/title/{book_title}')
-async def get_book_by_title(book_title: str):
-    books_to_return = [book for book in BOOKS if book_title.casefold() in book.get('title').casefold()]
-    return books_to_return
-
-
-@app.get("/books/{book_author}/")
-async def get_author_category_by_query(book_author: str, category: str):
-    books_to_return = [book for book in BOOKS if book.get('category').casefold() == category.casefold()
-                       and book_author.casefold() in book.get('author').casefold()]
-    return books_to_return
+    return list(books_to_return)
 
 
 @app.post('/books/create_book')
