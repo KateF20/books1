@@ -10,12 +10,12 @@ from models import BookModel
 app = FastAPI()
 
 BOOKS = [
-    BookModel(id=1, title='Computer Science Pro', author='codingwithroby', description='A very nice book!', rating=5, published_date=2020),
-    BookModel(id=2, title='Be Fast with FastAPI', author='codingwithroby', description='A great book!', rating=5, published_date=2002),
-    BookModel(id=3, title='Master Endpoints', author='codingwithroby', description='An awesome book!', rating=5, published_date=2019),
-    BookModel(id=4, title='HP1', author='Author 1', description='Book Description', rating=2, published_date=2018),
-    BookModel(id=5, title='HP2', author='Author 2', description='Book Description', rating=3, published_date=2017),
-    BookModel(id=6, title='HP3', author='Author 3', description='Book Description', rating=1, published_date=2016)
+    BookModel(1, 'Computer Science Pro', 'codingwithroby', 'A very nice book!', 5, 2020),
+    BookModel(2, 'Be Fast with FastAPI', 'codingwithroby', 'A great book!', 5, 2002),
+    BookModel(3, 'Master Endpoints', 'codingwithroby', 'An awesome book!', 5, 2019),
+    BookModel(4, 'HP1', 'Author 1', 'Book Description', 2, 2018),
+    BookModel(5, 'HP2', 'Author 2', 'Book Description', 3, 2017),
+    BookModel(6, 'HP3', 'Author 3', 'Book Description', 1, 2016)
 ]
 
 

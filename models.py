@@ -12,6 +12,10 @@ class BookModel(BaseModel):
     rating: int = Field(gt=-1, lt=6)
     published_date: int = Field(gt=1000, lt=datetime.date.today().year)
 
+    def __init__(self, id, title, author, description, rating, published_date):
+        super().__init__(id=id, title=title, author=author, description=description, rating=rating,
+                         published_date=published_date)
+
     class Config:
         schema_extra = {
             'example': {
@@ -22,4 +26,3 @@ class BookModel(BaseModel):
                 'published_date': 2023
             }
         }
-
