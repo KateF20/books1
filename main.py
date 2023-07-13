@@ -1,4 +1,3 @@
-import datetime
 from typing import Annotated, List
 
 from fastapi import FastAPI, Path, Query, HTTPException
