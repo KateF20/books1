@@ -1,12 +1,13 @@
 import datetime
+from typing import Annotated, List
 
 from fastapi import FastAPI, Path, Query, HTTPException
 from starlette import status
 
-from models2 import BookModel
+from models import BookModel
+
 
 app = FastAPI()
-
 
 BOOKS = [
     BookModel(1, 'Computer Science Pro', 'codingwithroby', 'A very nice book!', 5, 2020),
@@ -18,12 +19,7 @@ BOOKS = [
 ]
 
 
-@app.get('/books')
-async def get_all_books():
-    return BOOKS
-
-
-@app.get('/books/{book_id}')
+@app.get('/books/{book_id}', book_model=BookModel)
 async def get_book_by_id(book_id: int = Path(gt=0)):
     for book in BOOKS:
         if book.id == book_id:
@@ -31,16 +27,21 @@ async def get_book_by_id(book_id: int = Path(gt=0)):
     raise HTTPException(status_code=404, detail='Book not found')
 
 
-@app.get('/books/')
-async def get_book_by_rating(book_rating: int = Query(gt=0, lt=6)):
-    books_to_return = [book for book in BOOKS if book.rating == book_rating]
-    return books_to_return
+@app.get('/books', book_model=List[BookModel])
+async def get_book_by_query(
+    rating: Annotated[int, Query(gt=0, lt=6)] = None,
+    author: str = None,
+    title: str = None
+):
+    books_to_return = BOOKS
+    if rating:
+        books_to_return = filter(lambda book: rating == book.rating, books_to_return)
+    if author:
+        books_to_return = filter(lambda book: author.casefold() in book.author.casefold(), books_to_return)
+    if title:
+        books_to_return = filter(lambda book: title.casefold() in book.title.casefold(), books_to_return)
 
-
-@app.get('/books/publish/')
-async def get_book_by_publish(published_date: int = Query(gt=1000, lt=datetime.date.today().year)):
-    books_to_return = [book for book in BOOKS if book.published_date == published_date]
-    return books_to_return
+    return list(books_to_return)
 
 
 @app.post('/create-book', status_code=status.HTTP_201_CREATED)
@@ -56,22 +57,19 @@ def get_book_id(book: BookModel):
 
 @app.put('/books/update_book', status_code=status.HTTP_204_NO_CONTENT)
 async def update_book(book: BookModel):
-    book_changed = False
     for i, current_book in enumerate(BOOKS):
         if current_book.id == book.id:
             BOOKS[i] = book
-            book_changed = True
-    if not book_changed:
+            break
+    else:
         raise HTTPException(status_code=404, detail='Book not found')
 
 
 @app.delete('/books/{book_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_book(book_id: int = Path(gt=0)):
-    book_changed = False
     for i, current_book in enumerate(BOOKS):
         if current_book.id == book_id:
             del BOOKS[i]
-            book_changed = True
             break
-    if not book_changed:
+    else:
         raise HTTPException(status_code=404, detail='Book not found')
